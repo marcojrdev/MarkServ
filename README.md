@@ -1,4 +1,5 @@
 # MarkServ — API (TypeScript + Express + Prisma)
+#front: https://github.com/marcojrdev/MarkServ---front
 
 Resumo rápido
 - Backend em TypeScript com Express e Prisma (PostgreSQL).
