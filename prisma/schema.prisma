@@ -1,0 +1,88 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model TipoServico {
+  idTipoServico String   @id @default(uuid())
+  nome          String   @unique
+  servicos      Servico[]
+}
+
+model Cliente {
+  idCliente  String @id @default(uuid())
+  nome        String
+  email       String @unique
+  senha       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  contratacoes  Contratacao[]
+}
+
+model Prestador {
+    idPrestador         String @id @default(uuid())
+    nome          String
+    email         String @unique
+    senha         String
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+    servicos      Servico[]
+    
+    contratacao   Contratacao[]
+}
+
+model Servico {
+  idServico       String   @id @default(uuid())
+  nome            String
+  descricao       String
+  fotos           String[]
+  prestadorId     String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  tipoServicoId   String
+  tipoServico     TipoServico    @relation(fields: [tipoServicoId], references: [idTipoServico])
+  prestador       Prestador @relation(fields: [prestadorId], references: [idPrestador ])
+  variacoes       VariacoesServico[]
+  agenda          Agenda[]
+ contratacao      Contratacao[]
+}
+
+model VariacoesServico {
+  idVariacoesServico  String @id @default(uuid())
+  nome                String
+  preco               Float
+  duracao             Int
+  servicoId           String
+  servico             Servico @relation(fields: [servicoId], references: [idServico])
+}
+
+model Agenda {
+  idAgenda      String @id @default(uuid())
+  diaSemana     String
+  status        String   @default("aprovado") 
+  horaInicio    String
+  horaFim       String
+  servico       Servico @relation(fields: [servicoId], references: [idServico])
+  servicoId     String
+   
+}
+
+model Contratacao {
+  idContratacao String   @id @default(uuid())
+  clienteId     String
+  servicoId     String
+  prestadorId   String
+  data          DateTime
+  duracaoMin    Int
+  preco         Float
+  status        String   @default("aprovado") 
+  criadoEm      DateTime @default(now())
+
+  cliente       Cliente   @relation(fields: [clienteId], references: [idCliente])
+  servico       Servico   @relation(fields: [servicoId], references: [idServico])
+  prestador     Prestador @relation(fields: [prestadorId], references: [idPrestador])
+}
